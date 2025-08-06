@@ -15,6 +15,11 @@ cat > config/database.php << EOF
 \$config['db']['host'] = '${DB_HOST:-mysql.railway.internal}';
 \$config['db']['prefix'] = '${DB_PREFIX:-cr_}';
 \$config['displayErrorDetails'] = false;
+\$config['displayErrors'] = false;
+\$config['logErrors'] = true;
+\$config['errorLog'] = '/tmp/php_errors.log';
+\$config['addContentLengthHeader'] = false;
+\$config['determineRouteBeforeAppMiddleware'] = true;
 EOF
 
 # Auth config
@@ -39,4 +44,4 @@ echo "Configuration files created successfully!"
 
 # Start PHP development server with custom configuration
 echo "Starting PHP server on port ${PORT:-8080}..."
-php -c php.ini -S 0.0.0.0:${PORT:-8080} -t public public/index.php 
+php -c php.ini -S 0.0.0.0:${PORT:-8080} -t public public/index-wrapper.php 

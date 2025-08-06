@@ -44,4 +44,4 @@ echo "Configuration files created successfully!"
 
 # Start PHP development server with custom configuration
 echo "Starting PHP server on port ${PORT:-8080}..."
-php -c php.ini -S 0.0.0.0:${PORT:-8080} -t public public/index-wrapper.php 
+php -c php.ini -S 0.0.0.0:${PORT:-8080} -t public public/index-simple.php 

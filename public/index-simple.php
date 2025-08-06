@@ -1,6 +1,10 @@
 <?php
-// Simple index.php to get the application working
-echo "=== Rota Management System ===\n";
+// Simple test to check if PHP is working
+error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING);
+ini_set('display_errors', 'Off');
+ini_set('display_startup_errors', 'Off');
+
+echo "=== Rota Management System Test ===\n";
 echo "PHP Version: " . phpversion() . "\n";
 echo "Status: Application is running!\n";
 
@@ -17,7 +21,7 @@ echo "\nDatabase Connection:\n";
 try {
     $pdo = new PDO('mysql:host=mysql.railway.internal;dbname=railway', 'root', 'cRyfgtFAITBVWVNPkYFksVZDMSBvsgBo');
     echo "✓ Database connection: SUCCESS\n";
-    
+
     $stmt = $pdo->query('SELECT COUNT(*) FROM cr_settings');
     $count = $stmt->fetchColumn();
     echo "✓ Settings count: $count\n";

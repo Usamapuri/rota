@@ -44,8 +44,67 @@ COPY docker/entrypoint.sh /usr/local/bin/
 COPY docker/entrypoint-debug.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint-debug.sh
 
+# Create a startup script that Railway will use
+RUN echo '#!/bin/bash' > /usr/local/bin/start.sh && \
+    echo 'echo "=== Railway Startup Script ==="' >> /usr/local/bin/start.sh && \
+    echo 'echo "Current directory: $(pwd)"' >> /usr/local/bin/start.sh && \
+    echo 'echo "Environment variables:"' >> /usr/local/bin/start.sh && \
+    echo 'env | grep -E "(DB_|APP_|AUTH_|EMAIL_)" || echo "No relevant env vars found"' >> /usr/local/bin/start.sh && \
+    echo 'echo "Creating configuration files..."' >> /usr/local/bin/start.sh && \
+    echo 'if [ ! -f /var/www/html/config/database.php ]; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "Creating database.php..."' >> /usr/local/bin/start.sh && \
+    echo '  cat > /var/www/html/config/database.php << EOF' >> /usr/local/bin/start.sh && \
+    echo '<?php' >> /usr/local/bin/start.sh && \
+    echo '\$config["db"]["dbname"] = "\${DB_NAME:-railway}";' >> /usr/local/bin/start.sh && \
+    echo '\$config["db"]["user"] = "\${DB_USER:-root}";' >> /usr/local/bin/start.sh && \
+    echo '\$config["db"]["pass"] = "\${DB_PASSWORD}";' >> /usr/local/bin/start.sh && \
+    echo '\$config["db"]["host"] = "\${DB_HOST:-mysql.railway.internal}";' >> /usr/local/bin/start.sh && \
+    echo '\$config["db"]["prefix"] = "\${DB_PREFIX:-cr_}";' >> /usr/local/bin/start.sh && \
+    echo 'EOF' >> /usr/local/bin/start.sh && \
+    echo '  echo "database.php created"' >> /usr/local/bin/start.sh && \
+    echo 'else' >> /usr/local/bin/start.sh && \
+    echo '  echo "database.php already exists"' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'if [ ! -f /var/www/html/config/auth.php ]; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "Creating auth.php..."' >> /usr/local/bin/start.sh && \
+    echo '  cat > /var/www/html/config/auth.php << EOF' >> /usr/local/bin/start.sh && \
+    echo '<?php' >> /usr/local/bin/start.sh && \
+    echo '\$config["auth"]["scheme"] = "\${AUTH_SCHEME:-database}";' >> /usr/local/bin/start.sh && \
+    echo 'EOF' >> /usr/local/bin/start.sh && \
+    echo '  echo "auth.php created"' >> /usr/local/bin/start.sh && \
+    echo 'else' >> /usr/local/bin/start.sh && \
+    echo '  echo "auth.php already exists"' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'if [ ! -f /var/www/html/config/email.php ]; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "Creating email.php..."' >> /usr/local/bin/start.sh && \
+    echo '  cat > /var/www/html/config/email.php << EOF' >> /usr/local/bin/start.sh && \
+    echo '<?php' >> /usr/local/bin/start.sh && \
+    echo '\$config["email"]["method"] = "\${EMAIL_METHOD:-mailgun}";' >> /usr/local/bin/start.sh && \
+    echo 'EOF' >> /usr/local/bin/start.sh && \
+    echo '  echo "email.php created"' >> /usr/local/bin/start.sh && \
+    echo 'else' >> /usr/local/bin/start.sh && \
+    echo '  echo "email.php already exists"' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'if [ ! -f /var/www/html/config/recording.php ]; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "Creating recording.php..."' >> /usr/local/bin/start.sh && \
+    echo '  cat > /var/www/html/config/recording.php << EOF' >> /usr/local/bin/start.sh && \
+    echo '<?php' >> /usr/local/bin/start.sh && \
+    echo '\$config["recording"]["enabled"] = \${RECORDING_ENABLED:-false};' >> /usr/local/bin/start.sh && \
+    echo 'EOF' >> /usr/local/bin/start.sh && \
+    echo '  echo "recording.php created"' >> /usr/local/bin/start.sh && \
+    echo 'else' >> /usr/local/bin/start.sh && \
+    echo '  echo "recording.php already exists"' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'echo "Setting permissions..."' >> /usr/local/bin/start.sh && \
+    echo 'chown -R www-data:www-data /var/www/html' >> /usr/local/bin/start.sh && \
+    echo 'chmod -R 755 /var/www/html' >> /usr/local/bin/start.sh && \
+    echo 'chmod 777 /var/www/html/logs' >> /usr/local/bin/start.sh && \
+    echo 'echo "=== Starting Apache ==="' >> /usr/local/bin/start.sh && \
+    echo 'exec apache2-foreground' >> /usr/local/bin/start.sh && \
+    chmod +x /usr/local/bin/start.sh
+
 # Expose port
 EXPOSE 80
 
-# Use debug entrypoint script
-ENTRYPOINT ["/usr/local/bin/entrypoint-debug.sh"] 
+# Use the startup script
+CMD ["/usr/local/bin/start.sh"] 

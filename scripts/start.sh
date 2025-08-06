@@ -14,6 +14,7 @@ cat > config/database.php << EOF
 \$config['db']['pass'] = '${DB_PASSWORD}';
 \$config['db']['host'] = '${DB_HOST:-mysql.railway.internal}';
 \$config['db']['prefix'] = '${DB_PREFIX:-cr_}';
+\$config['displayErrorDetails'] = false;
 EOF
 
 # Auth config
@@ -36,6 +37,6 @@ EOF
 
 echo "Configuration files created successfully!"
 
-# Start PHP development server
+# Start PHP development server with custom configuration
 echo "Starting PHP server on port ${PORT:-8080}..."
-php -S 0.0.0.0:${PORT:-8080} -t public public/index.php 
+php -c php.ini -S 0.0.0.0:${PORT:-8080} -t public public/index.php 

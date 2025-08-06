@@ -9,4 +9,6 @@ restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 [deploy.envs]
-PHP_VERSION = "7.4" 
+PHP_VERSION = "7.4"
+DISPLAY_ERRORS = "Off"
+ERROR_REPORTING = "E_ALL & ~E_DEPRECATED & ~E_STRICT" 

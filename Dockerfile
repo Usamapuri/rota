@@ -41,10 +41,11 @@ RUN mkdir -p /var/www/html/logs && chmod 777 /var/www/html/logs
 
 # Copy and set permissions for entrypoint script
 COPY docker/entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY docker/entrypoint-debug.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint-debug.sh
 
 # Expose port
 EXPOSE 80
 
-# Use entrypoint script
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"] 
+# Use debug entrypoint script
+ENTRYPOINT ["/usr/local/bin/entrypoint-debug.sh"] 

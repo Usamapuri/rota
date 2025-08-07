@@ -9,7 +9,7 @@ return [
                 'default' => [
                     'adapter'    => 'mysql',
                     'classname'  => 'Propel\Runtime\Connection\ConnectionWrapper',
-                    'dsn'        => 'mysql:host='.$config['db']['host'].';dbname='.$config['db']['dbname'],
+                    'dsn'        => 'mysql:host='.$config['db']['host'].';port='.$config['db']['port'].';dbname='.$config['db']['dbname'],
                     'user'       => $config['db']['user'],
                     'password'   => $config['db']['pass'],
                     'attributes' => [],

@@ -2,6 +2,10 @@
 
 date_default_timezone_set('UTC');
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
     // something which should probably be served as a static file
